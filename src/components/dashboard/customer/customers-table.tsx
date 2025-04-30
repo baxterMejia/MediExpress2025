@@ -161,7 +161,7 @@ export function CustomersTable(): React.JSX.Element {
                   <TableCell>{row.medicamentos.join(', ')}</TableCell>
                   <TableCell>{row.estado}</TableCell>
                   <TableCell>{dayjs(row.fecha).format('DD/MM/YYYY')}</TableCell>
-                  <TableCell>{calcularValorTotal(row.medicamentos)} €</TableCell>
+                  <TableCell>${calcularValorTotal(row.medicamentos)}</TableCell>
                 </TableRow>
               );
             })}

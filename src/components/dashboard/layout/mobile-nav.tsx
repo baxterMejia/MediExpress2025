@@ -24,6 +24,8 @@ export interface MobileNavProps {
 
 export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element {
   const pathname = usePathname();
+  const role = sessionStorage.getItem('role') || '';
+
 
   return (
     <Drawer
@@ -60,7 +62,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: navItems })}
+        {renderNavItems({ pathname, items: navItems.filter((item) => item.role === role) })}
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
     </Drawer>
