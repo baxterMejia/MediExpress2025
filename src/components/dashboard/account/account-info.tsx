@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -8,16 +9,34 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-const user = {
-  name: 'Johan Mejia',
+const defaultUser = {
+  name: 'Cliente',
   avatar: '/assets/avatar.png',
-  jobTitle: 'Senior Developer',
+  jobTitle: 'Cliente',
   country: 'COLOMBIA',
   city: 'Bogotá',
   timezone: 'GMT-5',
-} as const;
+};
+
+const adminUser = {
+  name: 'Administrador',
+  avatar: '/assets/avatar-10.png',
+  jobTitle: 'Administrador',
+  country: 'COLOMBIA',
+  city: 'Bogotá',
+  timezone: 'GMT-5',
+};
 
 export function AccountInfo(): React.JSX.Element {
+  const [user, setUser] = React.useState(defaultUser);
+
+  React.useEffect(() => {
+    const role = sessionStorage.getItem('role');
+    if (role === 'admin') {
+      setUser(adminUser);
+    }
+  }, []);
+
   return (
     <Card>
       <CardContent>

@@ -30,6 +30,10 @@ const epsOptions = [
 ];
 
 export function AccountDetailsForm(): React.JSX.Element {
+  const role = sessionStorage.getItem('role') || '';
+  const email = role == 'Admin' ? 'Admin@ejemplo.io' : 'Cliente@ejemplo.io';
+
+
   return (
     <form
       onSubmit={(event) => {
@@ -56,7 +60,7 @@ export function AccountDetailsForm(): React.JSX.Element {
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Correo electrónico</InputLabel>
-                <OutlinedInput defaultValue="johan@mejia.io" label="Correo electrónico" name="email" />
+                <OutlinedInput defaultValue={email} label="Correo electrónico" name="email" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>

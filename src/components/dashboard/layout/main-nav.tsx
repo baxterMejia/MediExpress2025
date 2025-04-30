@@ -20,6 +20,9 @@ import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
+  const role = sessionStorage.getItem('role') || '';
+  const avatar = role === 'admin' ? '/assets/avatar-10.png' : '/assets/avatar.png';
+
 
   const userPopover = usePopover<HTMLDivElement>();
   const token = sessionStorage.getItem('token') || '';
@@ -108,7 +111,7 @@ export function MainNav(): React.JSX.Element {
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
+              src={avatar}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>

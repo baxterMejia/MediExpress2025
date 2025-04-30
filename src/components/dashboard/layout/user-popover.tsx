@@ -13,7 +13,6 @@ import { SignOut as SignOutIcon } from '@phosphor-icons/react/dist/ssr/SignOut';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 
 import { paths } from '@/paths';
-import { useUser } from '@/hooks/use-user';
 import { logoutUser } from '@/lib/auth/auth.service';
 
 export interface UserPopoverProps {
@@ -31,6 +30,27 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
     router.replace(paths.auth.signIn); // Redirige al login
   }, [router]);
 
+  const userClient = {
+    id: 'USR-000',
+    avatar: '/assets/avatar.png',
+    firstName: 'Cliente',
+    lastName: '',
+    email: 'Cliente@ejemplo.io',
+  };
+
+  const userAdmin = {
+    id: 'USR-001',
+    avatar: '/assets/avatar-10.png',
+    firstName: 'Admin',
+    lastName: '',
+    email: 'Admin@ejemplo.io',
+  };
+
+
+
+  const role = sessionStorage.getItem('role') || '';
+  const userLogin = role === 'admin' ? userAdmin : userClient;
+
   return (
     <Popover
       anchorEl={anchorEl}
@@ -40,9 +60,9 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">Johan Mejia</Typography>
+        <Typography variant="subtitle1">{userLogin.firstName}</Typography>
         <Typography color="text.secondary" variant="body2">
-          Johan.Mejia@mejia.io
+          {userLogin.email}
         </Typography>
       </Box>
       <Divider />
@@ -51,19 +71,19 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           <ListItemIcon>
             <GearSixIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Settings
+          Ajustes
         </MenuItem>
         <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
           <ListItemIcon>
             <UserIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Profile
+          Perfil
         </MenuItem>
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Sign out
+          Cerrar Sesión
         </MenuItem>
       </MenuList>
     </Popover>

@@ -8,12 +8,20 @@ function generateToken(): string {
   return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
 }
 
-const user = {
+const userClient = {
   id: 'USR-000',
   avatar: '/assets/avatar.png',
-  firstName: 'Johan',
-  lastName: 'Mejia',
-  email: 'Johan@mejia.io',
+  firstName: 'Cliente',
+  lastName: '',
+  email: 'Cliente@ejemplo.io',
+} satisfies User;
+
+const userAdmin = {
+  id: 'USR-001',
+  avatar: '/assets/avatar-10.png',
+  firstName: 'Admin',
+  lastName: '',
+  email: 'Admin@ejemplo.io',
 } satisfies User;
 
 export interface SignUpParams {
@@ -76,16 +84,17 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
 
-    // We do not handle the API, so just check if we have a token in localStorage.
     const token = localStorage.getItem('custom-auth-token');
 
     if (!token) {
       return { data: null };
     }
 
-    return { data: user };
+    const role = sessionStorage.getItem('role') || '';
+
+
+    return { data: role === 'admin' ? userAdmin : userClient };
   }
 
   async signOut(): Promise<{ error?: string }> {
