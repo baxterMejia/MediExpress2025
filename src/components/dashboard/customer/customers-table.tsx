@@ -200,7 +200,7 @@ export function CustomersTable(): React.JSX.Element {
               fullWidth
               SelectProps={{
                 multiple: true,
-                renderValue: (selected) => selected.join(', '),
+                renderValue: (selected) => (selected as string[]).join(', '),
               }}
             >
               {medicamentosDisponibles.map((med) => (
