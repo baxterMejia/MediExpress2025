@@ -28,10 +28,10 @@ import { useSelection } from '@/hooks/use-selection';
 
 // Precio de los medicamentos
 const precioMedicamento: { [key: string]: number } = {
-  Paracetamol: 10,
-  Ibuprofeno: 15,
-  Amoxicilina: 20,
-  Omeprazol: 25,
+  Paracetamol: 10000,
+  Ibuprofeno: 15000,
+  Amoxicilina: 20000,
+  Omeprazol: 250000,
 };
 
 type Estado = 'Entregada' | 'Pendiente';
@@ -161,7 +161,7 @@ export function CustomersTable(): React.JSX.Element {
                   <TableCell>{row.medicamentos.join(', ')}</TableCell>
                   <TableCell>{row.estado}</TableCell>
                   <TableCell>{dayjs(row.fecha).format('DD/MM/YYYY')}</TableCell>
-                  <TableCell>${calcularValorTotal(row.medicamentos)}</TableCell>
+                  <TableCell>${calcularValorTotal(row.medicamentos)} COP</TableCell>
                 </TableRow>
               );
             })}
