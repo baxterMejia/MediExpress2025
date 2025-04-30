@@ -33,9 +33,6 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
       >
         <Stack spacing={3}>
           <Stack spacing={1}>
-            <Typography color="inherit" sx={{ fontSize: '24px', lineHeight: '32px', textAlign: 'center' }} variant="h1">
-              Bienvenido a MediExpress
-            </Typography>
             <Typography align="center" variant="subtitle1">
             </Typography>
           </Stack>
