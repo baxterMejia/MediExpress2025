@@ -92,11 +92,13 @@ export function CustomersTable(): React.JSX.Element {
   };
 
   const handleMedicamentoChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const value = event.target.value;
     setNewSolicitud((prev) => ({
       ...prev,
-      medicamentos: typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value,
+      medicamentos: typeof value === 'string' ? value.split(',') : value as string[],
     }));
   };
+
 
   // Calcular el valor total
   const calcularValorTotal = (medicamentos: string[]) => {
