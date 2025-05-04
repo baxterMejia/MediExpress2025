@@ -11,8 +11,8 @@ export const navItems = [
   // Administrador
   { key: 'solicitudes-pendientes', title: 'Solicitudes Pendientes', href: paths.dashboard.overview, icon: 'clipboard-list', role: 'admin' },
   { key: 'stock-medicamentos', title: 'Medicamentos en Stock', href: paths.dashboard.customers, icon: 'package', role: 'admin' },
-  { key: 'agenda-entregas', title: 'Agenda de Entregas', href: paths.dashboard.settings, icon: 'calendar', role: 'admin' },
-  { key: 'notificaciones-sistema', title: 'Notificaciones del Sistema', href: paths.dashboard.account, icon: 'bell-ring', role: 'admin' },
+  { key: 'agenda-entregas', title: 'Notificaciones del Sistema', href: paths.dashboard.settings, icon: 'bell-ring', role: 'admin' },
+  { key: 'mi-perfil', title: 'Mi Perfil', href: paths.dashboard.account, icon: 'admin', role: 'admin' },
 ] satisfies NavItemConfig[];
 
 
