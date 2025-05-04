@@ -117,7 +117,15 @@ export function Notifications(): React.JSX.Element {
                         <TableCell>{notification.id}</TableCell>
                         <TableCell>{notification.type}</TableCell>
                         <TableCell>{notification.date.format('DD/MM/YYYY')}</TableCell>
-                        <TableCell>{notification.address}</TableCell>
+                        <TableCell>
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(notification.address)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {notification.address}
+                          </a>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
