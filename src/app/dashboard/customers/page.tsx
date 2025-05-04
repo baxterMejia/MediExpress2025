@@ -23,13 +23,9 @@ export default function Page(): React.JSX.Element {
   const page = 0;
   const rowsPerPage = 5;
 
+
   return (
     <Stack spacing={3}>
-      <Stack direction="row" spacing={3}>
-        <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Solicitudes</Typography>
-        </Stack>
-      </Stack>
       <CustomersTable
       />
     </Stack>

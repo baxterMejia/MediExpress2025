@@ -47,6 +47,7 @@ interface Solicitud {
 const medicamentosDisponibles = ['Paracetamol', 'Ibuprofeno', 'Amoxicilina', 'Omeprazol'];
 
 export function CustomersTable(): React.JSX.Element {
+  const role = sessionStorage.getItem('role') || '';
   const [rows, setRows] = React.useState<Solicitud[]>([
     {
       id: '1',
@@ -116,108 +117,221 @@ export function CustomersTable(): React.JSX.Element {
     setPage(0);
   };
 
-  return (
-    <Card>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
-        <Button variant="contained" onClick={() => setDialogOpen(true)}>
-          Agregar solicitud
-        </Button>
-      </Box>
+  if (role === 'admin') {
+    const [stock, setStock] = React.useState([
+      { nombre: 'Paracetamol', cantidad: 50 },
+      { nombre: 'Ibuprofeno', cantidad: 30 },
+      { nombre: 'Amoxicilina', cantidad: 20 },
+      { nombre: 'Omeprazol', cantidad: 10 },
+    ]);
 
-      <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: '800px' }}>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedAll}
-                  indeterminate={selectedSome}
-                  onChange={(event) => {
-                    event.target.checked ? selectAll() : deselectAll();
-                  }}
-                />
-              </TableCell>
-              <TableCell>Id</TableCell>
-              <TableCell>Paciente</TableCell>
-              <TableCell>Medicamentos</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Valor Total</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-              const isSelected = selected.has(row.id);
-              return (
-                <TableRow hover key={row.id} selected={isSelected}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={isSelected}
-                      onChange={(e) => (e.target.checked ? selectOne(row.id) : deselectOne(row.id))}
-                    />
-                  </TableCell>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.paciente}</TableCell>
-                  <TableCell>{row.medicamentos.join(', ')}</TableCell>
-                  <TableCell>{row.estado}</TableCell>
-                  <TableCell>{dayjs(row.fecha).format('DD/MM/YYYY')}</TableCell>
-                  <TableCell>${calcularValorTotal(row.medicamentos)} COP</TableCell>
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
+    const [formData, setFormData] = React.useState({ nombre: '', cantidad: 0 });
+
+    const handleOpenAdd = () => {
+      setEditingIndex(null);
+      setFormData({ nombre: '', cantidad: 0 });
+      setDialogOpen(true);
+    };
+
+    const handleOpenEdit = (index: number) => {
+      setEditingIndex(index);
+      setFormData(stock[index]);
+      setDialogOpen(true);
+    };
+
+    const handleSave = () => {
+      if (editingIndex !== null) {
+        // Editar existente
+        setStock((prev) => {
+          const updated = [...prev];
+          updated[editingIndex] = formData;
+          return updated;
+        });
+      } else {
+        // Agregar nuevo
+        setStock((prev) => [...prev, formData]);
+      }
+      setDialogOpen(false);
+    };
+
+    const handleDelete = (index: number) => {
+      setStock((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    return (
+      <>
+        <Stack direction="row" spacing={3} alignItems="center" justifyContent="space-between" mb={2}>
+          <Typography variant="h4">Stock de Medicamentos</Typography>
+          <Button variant="contained" onClick={handleOpenAdd}>Agregar Medicamento</Button>
+        </Stack>
+
+        <Card>
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: '600px' }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Medicamento</TableCell>
+                  <TableCell>Cantidad</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Box>
+              </TableHead>
+              <TableBody>
+                {stock.map((item, index) => (
+                  <TableRow key={item.nombre}>
+                    <TableCell>{item.nombre}</TableCell>
+                    <TableCell>{item.cantidad}</TableCell>
+                    <TableCell>
+                      <Button size="small" onClick={() => handleOpenEdit(index)}>Editar</Button>
+                      <Button size="small" color="error" onClick={() => handleDelete(index)}>Eliminar</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </Card>
 
-      <Divider />
+        {/* Diálogo para agregar/editar */}
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+          <DialogTitle>{editingIndex !== null ? 'Editar Medicamento' : 'Agregar Medicamento'}</DialogTitle>
+          <DialogContent>
+            <Stack spacing={2} mt={1} sx={{ width: '300px' }}>
+              <TextField
+                label="Nombre"
+                value={formData.nombre}
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                fullWidth
+              />
+              <TextField
+                label="Cantidad"
+                type="number"
+                value={formData.cantidad}
+                onChange={(e) => setFormData({ ...formData, cantidad: parseInt(e.target.value, 10) })}
+                fullWidth
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleSave} variant="contained">Guardar</Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
 
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
+  return (
+    <>
+      <Stack direction="row" spacing={3}>
+        <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
+          <Typography variant="h4">Solicitudes</Typography>
+        </Stack>
+      </Stack>
 
-      {/* Modal para agregar solicitud */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Agregar nueva solicitud</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1, width: '400px' }}>
-            <TextField
-              label="Nombre del paciente"
-              value={newSolicitud.paciente}
-              onChange={(e) => setNewSolicitud((prev) => ({ ...prev, paciente: e.target.value }))}
-              fullWidth
-            />
-            <TextField
-              select
-              label="Medicamentos"
-              value={newSolicitud.medicamentos}
-              onChange={handleMedicamentoChange}
-              fullWidth
-              SelectProps={{
-                multiple: true,
-                renderValue: (selected) => (selected as string[]).join(', '),
-              }}
-            >
-              {medicamentosDisponibles.map((med) => (
-                <MenuItem key={med} value={med}>
-                  {med}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleAddSolicitud} variant="contained">
-            Agregar
+      <Card>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+          <Button variant="contained" onClick={() => setDialogOpen(true)}>
+            Agregar solicitud
           </Button>
-        </DialogActions>
-      </Dialog>
-    </Card>
+        </Box>
+
+        <Box sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: '800px' }}>
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedAll}
+                    indeterminate={selectedSome}
+                    onChange={(event) => {
+                      event.target.checked ? selectAll() : deselectAll();
+                    }}
+                  />
+                </TableCell>
+                <TableCell>Id</TableCell>
+                <TableCell>Paciente</TableCell>
+                <TableCell>Medicamentos</TableCell>
+                <TableCell>Estado</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Valor Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                const isSelected = selected.has(row.id);
+                return (
+                  <TableRow hover key={row.id} selected={isSelected}>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isSelected}
+                        onChange={(e) => (e.target.checked ? selectOne(row.id) : deselectOne(row.id))}
+                      />
+                    </TableCell>
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>{row.paciente}</TableCell>
+                    <TableCell>{row.medicamentos.join(', ')}</TableCell>
+                    <TableCell>{row.estado}</TableCell>
+                    <TableCell>{dayjs(row.fecha).format('DD/MM/YYYY')}</TableCell>
+                    <TableCell>${calcularValorTotal(row.medicamentos)} COP</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+
+        <Divider />
+
+        <TablePagination
+          component="div"
+          count={rows.length}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+
+        {/* Modal para agregar solicitud */}
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+          <DialogTitle>Agregar nueva solicitud</DialogTitle>
+          <DialogContent>
+            <Stack spacing={2} sx={{ mt: 1, width: '400px' }}>
+              <TextField
+                label="Nombre del paciente"
+                value={newSolicitud.paciente}
+                onChange={(e) => setNewSolicitud((prev) => ({ ...prev, paciente: e.target.value }))}
+                fullWidth
+              />
+              <TextField
+                select
+                label="Medicamentos"
+                value={newSolicitud.medicamentos}
+                onChange={handleMedicamentoChange}
+                fullWidth
+                SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) => (selected as string[]).join(', '),
+                }}
+              >
+                {medicamentosDisponibles.map((med) => (
+                  <MenuItem key={med} value={med}>
+                    {med}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleAddSolicitud} variant="contained">
+              Agregar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Card>
+    </>
   );
 }
